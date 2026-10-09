@@ -1,3 +1,4 @@
+
 package com.example.listycity
 
 import androidx.compose.foundation.clickable
@@ -32,6 +33,7 @@ fun CityListScreen(
     cities: List<City>,
     onAddCity: (City) -> Unit,
     onUpdateCity: (City, City) -> Unit,
+    onDeleteCity: (City) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var newCityName by remember { mutableStateOf("") }
@@ -60,6 +62,7 @@ fun CityListScreen(
                 Text("+")
             }
         }
+
         if (showAddCityFields) {
             Row(
                 modifier = Modifier
@@ -81,6 +84,7 @@ fun CityListScreen(
                     label = { Text("Province") },
                     modifier = Modifier.weight(1f)
                 )
+
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Button(
@@ -104,6 +108,7 @@ fun CityListScreen(
                 }
             }
         }
+
         if (selectedCity != null) {
             Row(
                 modifier = Modifier
@@ -154,7 +159,29 @@ fun CityListScreen(
                     Text("UPDATE CITY")
                 }
             }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Button(
+                    onClick = {
+                        val cityToDelete = selectedCity
+                        if (cityToDelete != null) {
+                            onDeleteCity(cityToDelete)
+                            selectedCity = null
+                            editedCityName = ""
+                            editedProvinceName = ""
+                        }
+                    }
+                ) {
+                    Text("DELETE CITY")
+                }
+            }
         }
+
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             itemsIndexed(cities) { index, city ->
                 CityRow(
@@ -168,6 +195,7 @@ fun CityListScreen(
                         editedProvinceName = city.province
                     }
                 )
+
                 if (index < cities.lastIndex) {
                     HorizontalDivider()
                 }
@@ -175,7 +203,6 @@ fun CityListScreen(
         }
     }
 }
-
 
 @Composable
 fun CityRow(
@@ -213,7 +240,8 @@ fun CityListScreenPreview() {
                 City("Calgary", "AB")
             ),
             onAddCity = {},
-            onUpdateCity = { _, _ -> }
+            onUpdateCity = { _, _ -> },
+            onDeleteCity = {}
         )
     }
 }
